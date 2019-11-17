@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="250.0" prefWidth="500.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="ru.geekbrains.ponomarevss.controller.PrimaryController">
+    <children>
+        <HBox fx:id="authPanel" alignment="CENTER" layoutX="42.0" layoutY="98.0">
+            <TextField minWidth="100.0" fx:id="loginField" promptText="Login" HBox.hgrow="ALWAYS" />
+            <PasswordField minWidth="100.0" fx:id="passField" onAction="#sendAuth" promptText="Password" HBox.hgrow="ALWAYS">
+                <HBox.margin>
+                    <Insets left="5.0" />
+                </HBox.margin>
+            </PasswordField>
+            <Button minWidth="100.0" onAction="#sendAuth" text="Connect" HBox.hgrow="ALWAYS">
+                <HBox.margin>
+                    <Insets left="5.0" />
+                </HBox.margin>
+            </Button>
+        </HBox>
+        <VBox fx:id="chatPanel" alignment="CENTER" spacing="5.0" visible="false" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
+            <children>
+                <HBox>
+                    <TextArea       minWidth="390.0"    fx:id="chatTextArea" editable="false" wrapText="true">
+                        <HBox.margin>
+                            <Insets left="5.0" />
+                        </HBox.margin>
+                    </TextArea>
+                    <ListView       minWidth="100.0"    fx:id="clientList">
+                    </ListView>
+                </HBox>
+                <HBox>
+                    <TextField  minWidth="390.0"    fx:id="messageText"         onAction="#sendText" HBox.hgrow="ALWAYS">
+                        <HBox.margin>
+                            <Insets left="5.0" />
+                        </HBox.margin>
+                    </TextField>
+                    <Button     minWidth="100.0"    fx:id="sendMessageButton"   mnemonicParsing="false" onAction="#sendMessage" text="Send" />
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
