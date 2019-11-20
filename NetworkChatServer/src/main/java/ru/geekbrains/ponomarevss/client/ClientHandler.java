@@ -10,9 +10,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClientHandler {
 
+    public static final int TIMEOUT = 120 * 1000;
     private MyServer myServer;
 
     private String clientName;
@@ -65,8 +68,8 @@ public class ClientHandler {
     }
 
     private void closeConnection() {
+        myServer.broadcastMessage(Message.createPublic(null,clientName + " is offline"));
         myServer.unsubscribe(this);
-        myServer.broadcastMessage(clientName + " is offline");
         try {
             socket.close();
         } catch (IOException e) {
@@ -77,6 +80,24 @@ public class ClientHandler {
 
     private void authentication() throws IOException {
         while (true) {
+            Timer timeoutTimer = new Timer(true);
+            timeoutTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        synchronized (this) {
+                            if (clientName == null) {
+                                System.out.println("authentication is terminated caused by timeout expired");
+                                sendMessage(Message.createAuthError("authentication is terminated caused by timeout expired"));
+                                Thread.sleep(100);
+                                socket.close();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, TIMEOUT);
             String clientMessage = in.readUTF();
             synchronized (this) {
                 Message message = Message.fromJson(clientMessage);
@@ -86,7 +107,7 @@ public class ClientHandler {
                     String password = authMessage.password;
                     String nick = myServer.getAuthService().getNickByLoginPass(login, password);
                     if (nick == null) {
-                        sendMessage(Message.createAuthError("Incorrect login and password"));
+                        sendMessage(Message.createAuthError("Incorrect login and/or password"));
                         continue;
                     }
 
